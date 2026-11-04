@@ -21,3 +21,15 @@ Save your configuration from the rdgen web interface, or generate your own, then
 - Avoid special characters or non-English characters in app name and file name
 - Build time is currently 30 - 45 minutes
 
+
+## Branding presets (multi-empresa)
+
+Cada empresa tem uma pasta em `branding/<empresa>/` com `preset.env` (servidor, chave pública, nomes, cor) e, opcionalmente, `icon.png` (128x128) e `logo.png` (160x160).
+
+```bash
+./scripts/build-client.sh --list                                   # presets disponíveis
+./scripts/build-client.sh innerbit --platform windows --dry-run    # confere o comando
+./scripts/build-client.sh liberalcontabilidade --platform windows  # dispara o build
+```
+
+Para adicionar uma empresa: copie `branding/liberalcontabilidade/` para `branding/<nova>/`, preencha `preset.env`, adicione os PNGs e rode com `--dry-run` primeiro.
