@@ -28,7 +28,7 @@ Cada empresa tem uma pasta em `branding/<empresa>/` com `preset.env` (servidor, 
 
 ```bash
 ./scripts/build-client.sh --list                                   # presets disponíveis
-./scripts/build-client.sh innerbit --platform windows --dry-run    # confere o comando
+./scripts/build-client.sh liberalcontabilidade --platform windows --dry-run  # confere o comando
 ./scripts/build-client.sh liberalcontabilidade --platform windows  # dispara o build
 ```
 

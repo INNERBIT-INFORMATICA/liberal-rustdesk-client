@@ -34,7 +34,7 @@ if [[ ! -f "$PRESET_DIR/preset.env" ]]; then
   exit 1
 fi
 
-REPO="INNERBIT-INFORMATICA/rustdesk-client"
+REPO="INNERBIT-INFORMATICA/liberal-rustdesk-client"
 VERSION="1.5.0"
 SERVER="" KEY="" FILENAME="" APPNAME="" COMPNAME="" ACCENT_COLOR=""
 EXTRA_ARGS=()
