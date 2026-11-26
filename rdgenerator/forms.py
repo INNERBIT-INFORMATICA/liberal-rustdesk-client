@@ -8,11 +8,29 @@ from PIL import Image
 # silently, ' " $ ` break shell quoting, CR/LF break sed addressing.
 UNSAFE_NAME_CHARS = re.compile(r'[&\\|\'"$`\r\n]')
 
+# RustDesk's Windows installer only accepts these characters in the app name;
+# with anything else it closes before the UAC prompt and installs nothing.
+WINDOWS_APP_NAME = re.compile(r'[A-Za-z0-9-]+')
+WINDOWS_PLATFORMS = ('windows', 'windows-x86')
+WINDOWS_APP_NAME_ERROR = (
+    'For Windows, use only letters without accents, numbers and "-" '
+    '(no spaces or "_").'
+)
+
+
+def is_invalid_windows_appname(platform, appname):
+    return bool(
+        platform in WINDOWS_PLATFORMS
+        and appname
+        and not WINDOWS_APP_NAME.fullmatch(str(appname))
+    )
+
+
 class GenerateForm(forms.Form):
     sh_secret_field = forms.CharField(required=False)
     #Platform
     platform = forms.ChoiceField(choices=[('windows','Windows 64Bit'),('windows-x86','Windows 32Bit'),('linux','Linux'),('android','Android'),('macos','macOS')], initial='windows')
-    version = forms.ChoiceField(choices=[('master','nightly'),('1.5.0','1.5.0'),('1.4.9','1.4.9'),('1.4.8','1.4.8'),('1.4.7','1.4.7'),('1.4.6','1.4.6'),('1.4.5','1.4.5'),('1.4.4','1.4.4'),('1.4.3','1.4.3'),('1.4.2','1.4.2'),('1.4.1','1.4.1'),('1.4.0','1.4.0')], initial='1.5.0')
+    version = forms.ChoiceField(choices=[('master','nightly'),('1.5.3','1.5.3'),('1.5.0','1.5.0'),('1.4.9','1.4.9'),('1.4.8','1.4.8'),('1.4.7','1.4.7'),('1.4.6','1.4.6'),('1.4.5','1.4.5'),('1.4.4','1.4.4'),('1.4.3','1.4.3'),('1.4.2','1.4.2'),('1.4.1','1.4.1'),('1.4.0','1.4.0')], initial='1.5.3')
     help_text="'master' is the development version (nightly build) with the latest features but may be less stable"
     delayFix = forms.BooleanField(initial=True, required=False)
 
@@ -128,7 +146,11 @@ class GenerateForm(forms.Form):
         return value
 
     def clean_appname(self):
-        return self._reject_unsafe_name_chars('appname')
+        value = self._reject_unsafe_name_chars('appname')
+        # 'platform' is declared before 'appname', so it is already cleaned.
+        if is_invalid_windows_appname(self.cleaned_data.get('platform'), value):
+            raise forms.ValidationError(WINDOWS_APP_NAME_ERROR)
+        return value
 
     def clean_compname(self):
         return self._reject_unsafe_name_chars('compname')

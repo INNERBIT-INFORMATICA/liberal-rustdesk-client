@@ -52,12 +52,31 @@ env:
 
 
 jobs:
+  validate-config:
+    name: Validate client configuration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate app name
+        shell: python
+        env:
+          CONFIG_B64: ${{ inputs.config_b64 }}
+        run: |
+          import base64, json, os, re, sys
+          config = json.loads(base64.b64decode(os.environ["CONFIG_B64"]).decode("utf-8"))
+          appname = config.get("appname") or "rustdesk"
+          if not re.fullmatch(r"[A-Za-z0-9-]+", appname):
+              print("::error::Invalid appname: use only A-Z, a-z, 0-9 and '-'. "
+                    "Otherwise the Windows installer closes without asking for UAC.")
+              sys.exit(1)
+
   generate-bridge:
+    needs: [validate-config]
     uses: ./.github/workflows/bridge.yml
     with:
       version: ${{ inputs.version }}
 
   build-RustDeskTempTopMostWindow:
+    needs: [validate-config]
     uses: ./.github/workflows/third-party-RustDeskTempTopMostWindow.yml
     with:
       rustdesk-version: ${{ inputs.version }}
