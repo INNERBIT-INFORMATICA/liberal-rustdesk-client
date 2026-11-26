@@ -25,7 +25,7 @@ Example:
         --server rustdesk.innerbit.com.br \\
         --key "ZMLOYLzSTnPmfaWMds0RMWHtXApkfLY+wSk5K5QuKIo=" \\
         --filename innerbit-rustdesk \\
-        --version 1.5.0
+        --version 1.5.3
 """
 import argparse
 import base64
@@ -189,7 +189,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument('--repo', required=True, help='GitHub repo to dispatch against, e.g. INNERBIT-INFORMATICA/liberal-rustdesk-client')
     p.add_argument('--ref', default='master', help='branch to run the workflow from')
-    p.add_argument('--version', default='1.5.0', help='RustDesk version to build')
+    p.add_argument('--version', default='1.5.3', help='RustDesk version to build')
     p.add_argument('--filename', required=True, help='output exe/msi name (no spaces/special chars)')
     p.add_argument('--server', help='custom rendezvous server host (default: rs-ny.rustdesk.com)')
     p.add_argument('--server-port', default='', help='rendezvous port (default: 21116)')

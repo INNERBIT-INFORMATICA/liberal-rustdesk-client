@@ -34,4 +34,4 @@ Cada empresa tem uma pasta em `branding/<empresa>/` com `preset.env` (servidor, 
 
 Para adicionar uma empresa: copie `branding/liberalcontabilidade/` para `branding/<nova>/`, preencha `preset.env`, adicione os PNGs e rode com `--dry-run` primeiro.
 
-No Windows, `APPNAME` só aceita letras sem acento, números e `-` (sem espaço nem `_`). Fora disso, o instalador do RustDesk 1.5.0 fecha sem pedir o UAC e sem instalar. `COMPNAME` pode ter espaços.
+No Windows, `APPNAME` só aceita letras sem acento, números e `-` (sem espaço nem `_`). O RustDesk valida o nome antes de pedir o UAC: se for inválido, não instala (na 1.5.0 o instalador fecha sem mensagem). A 1.5.3 também aceita `_`, mas a regra daqui é mais restrita para valer também na 1.5.0. `COMPNAME` pode ter espaços.
