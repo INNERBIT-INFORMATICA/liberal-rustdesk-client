@@ -94,6 +94,14 @@ jobs:
           customHeaders: '{"Content-Type": "application/json"}'
           data: '{"uuid": "${{ env.uuid }}"}'
 
+      - name: Validate app name
+        shell: pwsh
+        run: |
+          if ($env:appname -and $env:appname -notmatch '\A[A-Za-z0-9-]+\z') {
+            Write-Output "::error::Invalid appname: use only A-Z, a-z, 0-9 and '-'. Otherwise the Windows installer closes without asking for UAC."
+            exit 1
+          }
+
       - name: Export GitHub Actions cache environment variables
         uses: actions/github-script@v6
         with:

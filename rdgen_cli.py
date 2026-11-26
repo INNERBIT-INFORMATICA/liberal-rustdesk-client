@@ -36,6 +36,7 @@ import sys
 
 UNSAFE_NAME_CHARS = re.compile(r'[&\\|\'"$`\r\n]')
 HEX_COLOR = re.compile(r'^[0-9A-Fa-f]{6}$')
+WINDOWS_APP_NAME = re.compile(r'[A-Za-z0-9-]+')
 
 
 def reject_unsafe(value, field):
@@ -48,6 +49,16 @@ def reject_unsafe(value, field):
 def validate_hex_color(value, field):
     if value and not HEX_COLOR.match(value):
         print(f"error: --{field} must be 6 hex digits (e.g. B5021B), got: '{value}'", file=sys.stderr)
+        sys.exit(1)
+    return value
+
+
+def validate_windows_appname(value):
+    # RustDesk's validate_install_app_name (src/platform/windows.rs) rejects
+    # anything else before asking for UAC elevation, so the installer window
+    # just closes. Fail here instead of after a 30-45 minute build.
+    if not WINDOWS_APP_NAME.fullmatch(value):
+        print(f"error: --appname must match [A-Za-z0-9-]+ for Windows builds, got: '{value}'", file=sys.stderr)
         sys.exit(1)
     return value
 
@@ -140,6 +151,8 @@ def build_config(args):
     url_link = args.url_link or 'https://rustdesk.com'
     download_link = args.download_link or 'https://rustdesk.com/download'
     appname = reject_unsafe(args.appname, 'appname') or 'rustdesk'
+    if args.platform == 'windows':
+        validate_windows_appname(appname)
     compname = (reject_unsafe(args.compname, 'compname') or 'Purslane Ltd').replace('&', r'\&')
     androidappid = args.android_app_id or 'com.carriez.flutter_hbb'
     accent_color = validate_hex_color(args.accent_color.upper(), 'accent-color')

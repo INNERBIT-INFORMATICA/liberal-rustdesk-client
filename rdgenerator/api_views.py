@@ -3,6 +3,7 @@ import os
 import re
 from django.http import JsonResponse
 from django.conf import settings as _settings
+from .forms import WINDOWS_APP_NAME_ERROR, is_invalid_windows_appname
 from .views import generate_custom_client, _get_run_status, _UUID_RE
 
 
@@ -99,6 +100,9 @@ def validate_generate_params(data):
                 'Contains characters unsupported in build scripts '
                 '(& \\ | \' " $ `, newlines).'
             )
+
+    if is_invalid_windows_appname(cleaned.get('platform'), cleaned.get('appname')):
+        errors.setdefault('appname', WINDOWS_APP_NAME_ERROR)
 
     # File fields are not used in API mode (base64 fields are used instead)
     cleaned['iconfile'] = None
